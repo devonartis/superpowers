@@ -26,7 +26,7 @@ You MUST create a task for each of these items and complete them in order:
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — save to `.plans/specs/YYYY-MM-DD-<topic>-design.md` and commit
+6. **Write design doc** — save to `.plans/specs/YYYY-MM-DD-<topic>-design.html` (HTML, see After the Design) and commit
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 8. **User reviews written spec** — ask user to review the spec file before proceeding
 9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
@@ -103,8 +103,13 @@ digraph brainstorming {
 
 **Documentation:**
 
-- Write the validated design (spec) to `.plans/specs/YYYY-MM-DD-<topic>-design.md`
+- Write the validated design (spec) to `.plans/specs/YYYY-MM-DD-<topic>-design.html`
   - (User preferences for spec location override this default)
+  - **Design docs are HTML, not markdown** — read by humans in a browser and by agents. Use the
+    same self-contained dark skeleton as the writing-plans HTML template (single file, inline
+    `<style>`, no external assets): `<h1>` title, `.meta` card for goal/constraints, `<h2>`
+    sections for architecture / components / data flow / error handling / testing, code in
+    `<pre><code>`, decisions and trade-offs in tables.
 - Use elements-of-style:writing-clearly-and-concisely skill if available
 - Commit the design document to git
 

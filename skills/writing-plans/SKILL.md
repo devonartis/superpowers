@@ -15,8 +15,10 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Context:** If working in an isolated worktree, it should have been created via the `superpowers:using-git-worktrees` skill at execution time.
 
-**Save plans to:** `.plans/YYYY-MM-DD-<feature-name>.md`
+**Save plans to:** `.plans/YYYY-MM-DD-<feature-name>.html`
 - (User preferences for plan location override this default)
+- **Plans are HTML, not markdown.** They are read by humans in a browser AND executed by agents.
+  Step tracking uses `data-status` attributes instead of markdown checkboxes (see templates below).
 
 ## Scope Check
 
@@ -53,77 +55,110 @@ independently testable deliverable.
 
 ## Plan Document Header
 
-**Every plan MUST start with this header:**
+**Every plan is a single self-contained HTML file that MUST start with this skeleton** (dark,
+scannable, no external assets). The `<header>` card carries what the markdown header used to:
 
-```markdown
-# [Feature Name] Implementation Plan
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>[Feature Name] Implementation Plan</title>
+<style>
+  :root{--bg:#0f1115;--card:#181b22;--card2:#1e222b;--line:#2a2f3a;--fg:#e6e9ef;--mut:#9aa4b2;
+        --todo:#3b82f6;--done:#22c55e;--accent:#38bdf8;}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+  .wrap{max-width:940px;margin:0 auto;padding:32px 24px 80px}
+  code,pre{background:#20242d;border-radius:4px;font:12.5px/1.5 ui-monospace,Menlo,monospace;color:#cfe3ff}
+  code{padding:1px 6px} pre{padding:12px;overflow-x:auto} pre code{padding:0;background:none}
+  h1{font-size:26px;margin:0 0 6px}
+  h2{font-size:16px;text-transform:uppercase;letter-spacing:.03em;color:var(--mut);
+     margin:34px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .meta{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:16px 0}
+  .task{background:var(--card);border:1px solid var(--line);border-radius:12px;margin:14px 0;overflow:hidden}
+  .task>.hd{display:flex;gap:12px;align-items:center;padding:13px 18px;background:var(--card2)}
+  .task>.hd h3{margin:0;font-size:16px;flex:1}
+  .task .bd{padding:8px 18px 16px}
+  ol.steps{margin:8px 0;padding-left:20px}
+  ol.steps>li{margin:10px 0}
+  ol.steps>li[data-status="done"]{opacity:.55}
+  ol.steps>li[data-status="done"]>b:first-child::after{content:" ✓";color:var(--done)}
+  .files,.io{font-size:13.5px;color:var(--mut)}
+</style>
+</head>
+<body><div class="wrap">
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+<h1>[Feature Name] Implementation Plan</h1>
+<div class="meta">
+  <b>For agentic workers:</b> REQUIRED SUB-SKILL: superpowers:subagent-driven-development
+  (recommended) or superpowers:executing-plans, task-by-task. Track steps by flipping
+  <code>data-status="todo"</code> → <code>data-status="done"</code> on each step's
+  <code>&lt;li&gt;</code> (this replaces markdown checkboxes).<br><br>
+  <b>Goal:</b> [One sentence describing what this builds]<br>
+  <b>Architecture:</b> [2-3 sentences about approach]<br>
+  <b>Tech Stack:</b> [Key technologies/libraries]
+</div>
 
-**Goal:** [One sentence describing what this builds]
-
-**Architecture:** [2-3 sentences about approach]
-
-**Tech Stack:** [Key technologies/libraries]
-
-## Global Constraints
-
-[The spec's project-wide requirements — version floors, dependency limits,
-naming and copy rules, platform requirements — one line each, with exact
-values copied verbatim from the spec. Every task's requirements implicitly
-include this section.]
-
----
+<h2>Global Constraints</h2>
+<div class="meta">
+[The spec's project-wide requirements — version floors, dependency limits, naming and copy
+rules, platform requirements — one line each, exact values copied verbatim from the spec.
+Every task's requirements implicitly include this section.]
+</div>
 ```
 
 ## Task Structure
 
-````markdown
-### Task N: [Component Name]
+Each task is a `.task` card. Steps are `<li data-status="todo">` items — an executor flips the
+attribute to `"done"` as it completes each step (grep `data-status="todo"` to find remaining work).
+Code goes in `<pre><code>` exactly as it would have gone in fenced blocks — complete, no placeholders.
 
-**Files:**
-- Create: `exact/path/to/file.py`
-- Modify: `exact/path/to/existing.py:123-145`
-- Test: `tests/exact/path/to/test.py`
-
-**Interfaces:**
-- Consumes: [what this task uses from earlier tasks — exact signatures]
-- Produces: [what later tasks rely on — exact function names, parameter
-  and return types. A task's implementer sees only their own task; this
-  block is how they learn the names and types neighboring tasks use.]
-
-- [ ] **Step 1: Write the failing test**
-
-```python
-def test_specific_behavior():
+```html
+<div class="task" id="task-N">
+  <div class="hd"><h3>Task N: [Component Name]</h3></div>
+  <div class="bd">
+    <p class="files">
+      <b>Files:</b><br>
+      Create: <code>exact/path/to/file.py</code><br>
+      Modify: <code>exact/path/to/existing.py:123-145</code><br>
+      Test: <code>tests/exact/path/to/test.py</code>
+    </p>
+    <p class="io">
+      <b>Interfaces:</b><br>
+      Consumes: [what this task uses from earlier tasks — exact signatures]<br>
+      Produces: [what later tasks rely on — exact function names, parameter and return types.
+      A task's implementer sees only their own task; this block is how they learn the names
+      and types neighboring tasks use.]
+    </p>
+    <ol class="steps">
+      <li data-status="todo"><b>Write the failing test</b>
+<pre><code>def test_specific_behavior():
     result = function(input)
-    assert result == expected
+    assert result == expected</code></pre>
+      </li>
+      <li data-status="todo"><b>Run test to verify it fails</b><br>
+        Run: <code>pytest tests/path/test.py::test_name -v</code><br>
+        Expected: FAIL with "function not defined"
+      </li>
+      <li data-status="todo"><b>Write minimal implementation</b>
+<pre><code>def function(input):
+    return expected</code></pre>
+      </li>
+      <li data-status="todo"><b>Run test to verify it passes</b><br>
+        Run: <code>pytest tests/path/test.py::test_name -v</code><br>
+        Expected: PASS
+      </li>
+      <li data-status="todo"><b>Commit</b>
+<pre><code>git add tests/path/test.py src/path/file.py
+git commit -m "feat: add specific feature"</code></pre>
+      </li>
+    </ol>
+  </div>
+</div>
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
-
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: FAIL with "function not defined"
-
-- [ ] **Step 3: Write minimal implementation**
-
-```python
-def function(input):
-    return expected
-```
-
-- [ ] **Step 4: Run test to verify it passes**
-
-Run: `pytest tests/path/test.py::test_name -v`
-Expected: PASS
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add tests/path/test.py src/path/file.py
-git commit -m "feat: add specific feature"
-```
-````
+Close the document after the last task: `</div></body></html>`
 
 ## No Placeholders
 
@@ -157,7 +192,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 After saving the plan, offer execution choice:
 
-**"Plan complete and saved to `.plans/<filename>.md`. Two execution options:**
+**"Plan complete and saved to `.plans/<filename>.html`. Two execution options:**
 
 **1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
 
