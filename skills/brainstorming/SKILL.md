@@ -83,7 +83,7 @@ digraph brainstorming {
 - Once you believe you understand what you're building, present the design
 - Scale each section to its complexity: a few sentences if straightforward, up to 200-300 words if nuanced
 - Ask after each section whether it looks right so far
-- Cover: architecture, components, data flow, error handling, testing
+- Cover: success criteria, user stories, architecture, components, data flow, error handling, testing
 - Be ready to go back and clarify if something doesn't make sense
 
 **Design for isolation and clarity:**
@@ -113,6 +113,13 @@ digraph brainstorming {
     understand what this is, what problem it solves, and what the answer is *before* hitting any
     architectural detail. This is the top of every design doc, not optional — it's the fix for
     design docs that dive into mechanics with no high-level overview.
+  - **Acceptance criteria are a design concern, not a downstream one.** The design carries the
+    Success Criteria and User Stories, so the owner approves a design already knowing what DONE
+    means. Downstream specs and plans *reference* the design's criteria rather than restating
+    them — one home per fact, no drift. Success criteria must be testable (positive and
+    negative); a design without them is not approvable. User stories are grouped by persona,
+    and where the project defines testing personas (e.g. operator / developer /
+    security-reviewer), draw them from there.
 - Use elements-of-style:writing-clearly-and-concisely skill if available
 - Commit the design document to git
 
@@ -214,6 +221,26 @@ assets), so a spec and its plan read as one system.
 
 <h2>Solution</h2>
 <p>{{SOLUTION: the answer, at a high level, before any mechanics}}</p>
+
+<!-- ===== SUCCESS CRITERIA — the design is not approvable without them ===== -->
+<h2>Success Criteria</h2>
+<p>Each criterion is a testable outcome — if you can't test it, rewrite it. Include positive
+   (it works) and negative (it rejects bad input) criteria. The design is not approvable
+   without them.</p>
+<ol>
+  <!-- repeat: one numbered criterion per testable outcome -->
+  <li>{{SUCCESS_CRITERION: a single outcome you can prove pass or fail}}</li>
+</ol>
+
+<!-- ===== USER STORIES — grouped by persona ===== -->
+<h2>User Stories</h2>
+<!-- repeat: one <h3> + list per persona. Personas come from the project's testing rules
+     (e.g. operator / developer / security-reviewer) where such rules exist. -->
+<h3>{{PERSONA}}</h3>
+<ul>
+  <!-- repeat: one story per line -->
+  <li>As a(n) {{PERSONA}}, I want {{ACTION}} so that {{BENEFIT}}.</li>
+</ul>
 
 <!-- ===== DECISIONS — forks resolved with the owner during brainstorming ===== -->
 <h2>Decisions</h2>
