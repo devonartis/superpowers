@@ -29,7 +29,7 @@ You MUST create a task for each of these items and complete them in order:
 6. **Write design doc** — build it from the Design Document Template, save to `.plans/specs/YYYY-MM-DD-<topic>-design.html` (see After the Design) and commit
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 8. **User reviews written spec** — ask user to review the spec file before proceeding
-9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
+9. **Transition to the next skill** — invoke writing-specs when the project's process includes a spec step or the work needs the precision layer (exact code regions, contract changes, edge-case table) before planning; otherwise invoke writing-plans directly (see the terminal-state note under Process Flow)
 
 ## Process Flow
 
@@ -43,6 +43,8 @@ digraph brainstorming {
     "Write design doc" [shape=box];
     "Spec self-review\n(fix inline)" [shape=box];
     "User reviews spec?" [shape=diamond];
+    "Needs a spec step?" [shape=diamond];
+    "Invoke writing-specs skill" [shape=doublecircle];
     "Invoke writing-plans skill" [shape=doublecircle];
 
     "Explore project context" -> "Ask clarifying questions";
@@ -54,11 +56,13 @@ digraph brainstorming {
     "Write design doc" -> "Spec self-review\n(fix inline)";
     "Spec self-review\n(fix inline)" -> "User reviews spec?";
     "User reviews spec?" -> "Write design doc" [label="changes requested"];
-    "User reviews spec?" -> "Invoke writing-plans skill" [label="approved"];
+    "User reviews spec?" -> "Needs a spec step?" [label="approved"];
+    "Needs a spec step?" -> "Invoke writing-specs skill" [label="yes"];
+    "Needs a spec step?" -> "Invoke writing-plans skill" [label="no"];
 }
 ```
 
-**The terminal state is invoking writing-plans.** Do NOT invoke frontend-design, mcp-builder, or any other implementation skill. The ONLY skill you invoke after brainstorming is writing-plans.
+**The terminal state is invoking the next planning skill — conditionally.** Invoke **writing-specs** when the project's process includes a spec step, or when the work needs the precision layer (exact code regions staged for the planning agent, contract/schema/API changes, an edge-case/risk table) before planning. Otherwise invoke **writing-plans** directly. writing-specs itself hands off onward (→ acceptance-testing → writing-plans), so either path ends at a plan. Do NOT invoke frontend-design, mcp-builder, or any other implementation skill — the only skills you invoke after brainstorming are writing-specs or writing-plans.
 
 ## The Process
 
@@ -151,10 +155,14 @@ After the spec review loop passes, ask the user to review the written spec befor
 
 Wait for the user's response. If they request changes, make them and re-run the spec review loop. Only proceed once the user approves.
 
-**Implementation:**
+**Next skill (conditional):**
 
-- Invoke the writing-plans skill to create a detailed implementation plan
-- Do NOT invoke any other skill. writing-plans is the next step.
+- If the project's process includes a spec step, or the work needs the precision layer
+  (exact code regions staged for the planning agent, contract/schema/API changes, an
+  edge-case/risk table) before planning — invoke the **writing-specs** skill. It turns this
+  design into a code-level spec, then hands off to acceptance-testing and writing-plans.
+- Otherwise, invoke the **writing-plans** skill directly to create the implementation plan.
+- Do NOT invoke any other skill. writing-specs or writing-plans is the next step.
 
 ## Design Document Template
 
