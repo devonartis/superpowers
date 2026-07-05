@@ -105,6 +105,12 @@ digraph brainstorming {
 
 ## After the Design
 
+> **⬛ Human-approval artifacts are HTML.** Design docs, specs, and plans exist to be
+> READ AND APPROVED BY A HUMAN. A human reads a styled HTML page dramatically faster than
+> raw markdown, and the things that must stand out — decisions, risks, criteria, warnings —
+> actually stand out. Author them as single self-contained dark-theme HTML files. Markdown
+> is for machine-consumed working artifacts (user-stories files, evidence files) only.
+
 **Documentation:**
 
 - Write the validated design (spec) to `.plans/specs/YYYY-MM-DD-<topic>-design.html`
@@ -169,6 +175,11 @@ Wait for the user's response. If they request changes, make them and re-run the 
 Build the design doc from this template. It shares the dark, self-contained skeleton the
 writing-plans plan template uses (same `:root` palette, single inline `<style>`, no external
 assets), so a spec and its plan read as one system.
+
+**Use the skeleton's emphasis styles deliberately.** Key decisions, open questionables, and
+success criteria get visually distinct treatment (the decisions table, `.meta`/`details`
+callouts, colored tags) — never buried in body prose. That's the point of HTML: what must
+stand out, stands out.
 
 ```html
 <!DOCTYPE html>

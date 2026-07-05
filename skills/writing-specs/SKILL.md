@@ -27,11 +27,14 @@ in the design doc (its Amendments section) and reference it here.
 - (User preferences for spec location override this default.)
 - The spec sits alongside its design doc (`.plans/specs/YYYY-MM-DD-<topic>-design.html`).
 
-**Format:** the spec is a self-contained dark-theme HTML file, the same skeleton the
-brainstorming design template and the writing-plans plan template use. The rule:
-**any artifact that needs heavy human approval — design, spec, plan — is HTML** (humans
-read it better in a browser; agents read it fine). Machine-consumed working artifacts —
-the `tests/<phase-or-fix>/user-stories.md` file, evidence files — stay Markdown.
+> **⬛ Human-approval artifacts are HTML.** Design docs, specs, and plans exist to be
+> READ AND APPROVED BY A HUMAN. A human reads a styled HTML page dramatically faster than
+> raw markdown, and the things that must stand out — decisions, risks, criteria, warnings —
+> actually stand out. Author them as single self-contained dark-theme HTML files. Markdown
+> is for machine-consumed working artifacts (user-stories files, evidence files) only.
+
+The spec uses the same skeleton the brainstorming design template and the writing-plans
+plan template use, so design, spec, and plan read as one system.
 
 ## When to Write a Spec
 
@@ -70,6 +73,11 @@ Build the spec from this template. It shares the dark, self-contained skeleton t
 brainstorming design template and the writing-plans plan template use (same `:root`
 palette, single inline `<style>`, no external assets), so design, spec, and plan read as
 one system. Code excerpts and contract JSON live in `<pre><code>`.
+
+**Use the skeleton's emphasis styles deliberately.** Contract changes, edge-case risks, and
+the "lives in the design doc" reference notes get visually distinct treatment (the `.note`
+callouts, the risks `<table>`) — never buried in body prose. That's the point of HTML: what
+must stand out, stands out.
 
 ```html
 <!DOCTYPE html>

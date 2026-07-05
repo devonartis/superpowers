@@ -20,6 +20,12 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 - **Plans are HTML, not markdown.** They are read by humans in a browser AND executed by agents.
   Step tracking uses `data-status` attributes instead of markdown checkboxes (see templates below).
 
+> **⬛ Human-approval artifacts are HTML.** Design docs, specs, and plans exist to be
+> READ AND APPROVED BY A HUMAN. A human reads a styled HTML page dramatically faster than
+> raw markdown, and the things that must stand out — decisions, risks, criteria, warnings —
+> actually stand out. Author them as single self-contained dark-theme HTML files. Markdown
+> is for machine-consumed working artifacts (user-stories files, evidence files) only.
+
 ## Scope Check
 
 If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
@@ -57,6 +63,11 @@ independently testable deliverable.
 
 **Every plan is a single self-contained HTML file that MUST start with this skeleton** (dark,
 scannable, no external assets). The `<header>` card carries what the markdown header used to:
+
+**Use the skeleton's emphasis styles deliberately.** Global constraints, testing-strategy
+loops, and failed steps get visually distinct treatment (the `.loop` callout, the
+`data-status` pills and colors) — never buried in body prose. That's the point of HTML: what
+must stand out, stands out.
 
 ```html
 <!DOCTYPE html>
