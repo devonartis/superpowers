@@ -183,7 +183,15 @@ pi.dev discovers skills natively and recursively, from two locations:
 
 Skills use the same `SKILL.md` format pi.dev already follows (frontmatter
 `name` + `description` — the Agent Skills standard shared with Claude
-Code). The primary install is one clone, pinned to a tag or commit:
+Code). Two ways to install, either pinned to a tag or commit:
+
+**Option A — Pi's package manager** (handles placement for you):
+
+```bash
+pi install git:github.com/devonartis/superpowers
+```
+
+**Option B — manual clone** into one of the native skill locations above:
 
 ```bash
 # Available in every project:
@@ -191,12 +199,6 @@ git clone https://github.com/devonartis/superpowers ~/.pi/agent/skills/superpowe
 
 # Or, project-only:
 git clone https://github.com/devonartis/superpowers <project>/.pi/skills/superpowers
-```
-
-Alternatively, Pi's own package manager can install straight from a repository:
-
-```bash
-pi install git:github.com/obra/superpowers
 ```
 
 For local development, run Pi with this checkout loaded as a temporary package:
