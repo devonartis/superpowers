@@ -26,7 +26,7 @@ You MUST create a task for each of these items and complete them in order:
 3. **Ask clarifying questions** — one at a time, understand purpose/constraints/success criteria
 4. **Propose 2-3 approaches** — with trade-offs and your recommendation
 5. **Present design** — in sections scaled to their complexity, get user approval after each section
-6. **Write design doc** — save to `.plans/specs/YYYY-MM-DD-<topic>-design.html` (HTML, see After the Design) and commit
+6. **Write design doc** — build it from the Design Document Template, save to `.plans/specs/YYYY-MM-DD-<topic>-design.html` (see After the Design) and commit
 7. **Spec self-review** — quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 8. **User reviews written spec** — ask user to review the spec file before proceeding
 9. **Transition to implementation** — invoke writing-plans skill to create implementation plan
@@ -105,13 +105,27 @@ digraph brainstorming {
 
 - Write the validated design (spec) to `.plans/specs/YYYY-MM-DD-<topic>-design.html`
   - (User preferences for spec location override this default)
-  - **Design docs are HTML, not markdown** — read by humans in a browser and by agents. Use the
-    same self-contained dark skeleton as the writing-plans HTML template (single file, inline
-    `<style>`, no external assets): `<h1>` title, `.meta` card for goal/constraints, `<h2>`
-    sections for architecture / components / data flow / error handling / testing, code in
-    `<pre><code>`, decisions and trade-offs in tables.
+  - **Design docs are HTML, not markdown** — read by humans in a browser and by agents.
+    Build the file from the **Design Document Template** below: a single self-contained
+    dark-theme file (inline `<style>`, no external assets) that shares the visual skeleton of
+    the writing-plans plan template.
+  - **Open with Purpose / Problem / Solution.** A reader with no other context must be able to
+    understand what this is, what problem it solves, and what the answer is *before* hitting any
+    architectural detail. This is the top of every design doc, not optional — it's the fix for
+    design docs that dive into mechanics with no high-level overview.
 - Use elements-of-style:writing-clearly-and-concisely skill if available
 - Commit the design document to git
+
+**Template discipline:**
+
+- The template uses `{{PLACEHOLDER}}` slots — replace EVERY `{{...}}` with real content. A
+  finished design doc contains zero `{{}}` tokens.
+- Blocks marked `<!-- repeat -->` are repeatable: duplicate them as many times as the design
+  needs (one row per decision, one entry per relevant file, one entry per questionable) and
+  delete the marker comments.
+- The metadata header is updatable across the doc's life: every field except `created` is an
+  append-only comma-separated list — append new entries, never overwrite or remove existing ones.
+- Leave the **Amendments** section empty at creation; it records only post-approval changes.
 
 **Spec Self-Review:**
 After writing the spec document, look at it with fresh eyes:
@@ -134,6 +148,126 @@ Wait for the user's response. If they request changes, make them and re-run the 
 
 - Invoke the writing-plans skill to create a detailed implementation plan
 - Do NOT invoke any other skill. writing-plans is the next step.
+
+## Design Document Template
+
+Build the design doc from this template. It shares the dark, self-contained skeleton the
+writing-plans plan template uses (same `:root` palette, single inline `<style>`, no external
+assets), so a spec and its plan read as one system.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{TOPIC}} — Design</title>
+<style>
+  :root{--bg:#0f1115;--card:#181b22;--card2:#1e222b;--line:#2a2f3a;--fg:#e6e9ef;--mut:#9aa4b2;
+        --todo:#3b82f6;--done:#22c55e;--accent:#38bdf8;--new:#22c55e;--existing:#9aa4b2;}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+  .wrap{max-width:940px;margin:0 auto;padding:32px 24px 80px}
+  code,pre{background:#20242d;border-radius:4px;font:12.5px/1.5 ui-monospace,Menlo,monospace;color:#cfe3ff}
+  code{padding:1px 6px} pre{padding:12px;overflow-x:auto} pre code{padding:0;background:none}
+  h1{font-size:26px;margin:0 0 6px}
+  h2{font-size:16px;text-transform:uppercase;letter-spacing:.03em;color:var(--mut);
+     margin:34px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  p{margin:8px 0}
+  .meta{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:16px 0}
+  .meta summary{cursor:pointer;color:var(--mut);font-weight:600}
+  .meta dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:12px 0 0}
+  .meta dt{color:var(--mut)} .meta dd{margin:0}
+  table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--card2);color:var(--mut);text-transform:uppercase;letter-spacing:.03em;font-size:12px}
+  ul.files{list-style:none;padding-left:0} ul.files>li{margin:6px 0}
+  .tag{font-size:11px;text-transform:uppercase;letter-spacing:.03em;padding:1px 7px;border-radius:999px;border:1px solid}
+  .tag.existing{color:var(--existing);border-color:var(--existing)}
+  .tag.new{color:var(--new);border-color:var(--new)}
+  details.item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin:10px 0}
+  details.item summary{cursor:pointer;font-weight:600}
+</style>
+</head>
+<body><div class="wrap">
+
+<!-- ===== HEADER + UPDATABLE METADATA ===== -->
+<h1>{{TOPIC}} — Design</h1>
+<details class="meta">
+  <summary>Metadata</summary>
+  <dl>
+    <dt>created</dt>      <dd>{{CREATED_ISO}}</dd>
+    <dt>modified</dt>     <dd>{{MODIFIED_ISO_LIST}}</dd>
+    <dt>commits</dt>      <dd>{{COMMIT_SHA_LIST}}</dd>
+    <dt>agents</dt>       <dd>{{AGENT_NAME_LIST}}</dd>
+    <dt>sessions</dt>     <dd>{{SESSION_ID_LIST}}</dd>
+    <dt>back refs</dt>    <dd>{{BACK_REFERENCES}}</dd>
+    <dt>forward refs</dt> <dd>{{FORWARD_REFERENCES}}</dd>
+  </dl>
+</details>
+
+<!-- ===== PURPOSE / PROBLEM / SOLUTION — a reader with NO other context starts here ===== -->
+<h2>Purpose</h2>
+<p>{{PURPOSE: what this is, in plain language — one paragraph a newcomer can understand}}</p>
+
+<h2>Problem</h2>
+<p>{{PROBLEM: what's broken or missing today, and why it matters}}</p>
+
+<h2>Solution</h2>
+<p>{{SOLUTION: the answer, at a high level, before any mechanics}}</p>
+
+<!-- ===== DECISIONS — forks resolved with the owner during brainstorming ===== -->
+<h2>Decisions</h2>
+<table>
+  <thead><tr><th>Fork</th><th>Decision</th><th>Rationale</th></tr></thead>
+  <tbody>
+    <!-- repeat: one row per resolved fork -->
+    <tr><td>{{FORK}}</td><td>{{DECISION}}</td><td>{{RATIONALE}}</td></tr>
+  </tbody>
+</table>
+
+<!-- ===== DESIGN DETAIL ===== -->
+<h2>Architecture</h2>
+<p>{{ARCHITECTURE: the shape of the system and how the pieces fit}}</p>
+
+<h2>Components</h2>
+<p>{{COMPONENTS: each unit, its one responsibility, and its interface}}</p>
+
+<h2>Data Flow</h2>
+<p>{{DATA_FLOW: how data moves through the system, request to response}}</p>
+
+<h2>Error Handling</h2>
+<p>{{ERROR_HANDLING: failure modes and how each is handled}}</p>
+
+<h2>Testing</h2>
+<p>{{TESTING: how the design is validated — what proves it works}}</p>
+
+<!-- ===== RELEVANT FILES ===== -->
+<h2>Relevant Files</h2>
+<ul class="files">
+  <!-- repeat -->
+  <li><span class="tag existing">existing</span> <code>{{EXISTING_FILE_PATH}}</code> — {{WHY_RELEVANT}}</li>
+  <!-- repeat -->
+  <li><span class="tag new">new</span> <code>{{NEW_FILE_PATH}}</code> — {{WHY_NEEDED}}</li>
+</ul>
+
+<!-- ===== QUESTIONABLES — open questions/assumptions surfaced, not silently decided ===== -->
+<h2>Questionables</h2>
+<!-- repeat: one entry per open question, assumption, or risk -->
+<details class="item">
+  <summary>{{QUESTIONABLE}}</summary>
+  <p>{{ASSUMPTION_OR_RATIONALE: what you assumed and why, or what still needs an answer}}</p>
+</details>
+
+<!-- ===== AMENDMENTS — append-only, EMPTY at creation; post-approval changes only ===== -->
+<h2>Amendments</h2>
+<!-- repeat: one entry per amendment, newest at the bottom. Leave empty at creation. -->
+<details class="item">
+  <summary>{{AMEND_ISO}} — {{AMEND_SUMMARY}}</summary>
+  <p>{{AMEND_DETAIL: what changed after approval, and why}}</p>
+</details>
+
+</div></body></html>
+```
 
 ## Key Principles
 
