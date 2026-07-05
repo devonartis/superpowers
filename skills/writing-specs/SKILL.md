@@ -23,9 +23,15 @@ in the design doc (its Amendments section) and reference it here.
 
 **Announce at start:** "I'm using the writing-specs skill to write the spec."
 
-**Save specs to:** `.plans/specs/YYYY-MM-DD-<topic>-spec.md`
+**Save specs to:** `.plans/specs/YYYY-MM-DD-<topic>-spec.html`
 - (User preferences for spec location override this default.)
 - The spec sits alongside its design doc (`.plans/specs/YYYY-MM-DD-<topic>-design.html`).
+
+**Format:** the spec is a self-contained dark-theme HTML file, the same skeleton the
+brainstorming design template and the writing-plans plan template use. The rule:
+**any artifact that needs heavy human approval — design, spec, plan — is HTML** (humans
+read it better in a browser; agents read it fine). Machine-consumed working artifacts —
+the `tests/<phase-or-fix>/user-stories.md` file, evidence files — stay Markdown.
 
 ## When to Write a Spec
 
@@ -50,139 +56,163 @@ turn it into tasks — the spec is what lets that agent skip re-reading the code
 
 ## Template Discipline
 
-- The template uses `[...]` bracket slots — replace EVERY slot with real content. A
-  finished spec contains no leftover `[...]` placeholder text.
-- Repeatable blocks (numbered code-region subsections, table rows) are duplicated as many
-  times as the spec needs.
+- The template uses `{{PLACEHOLDER}}` slots — replace EVERY `{{...}}` with real content. A
+  finished spec contains zero `{{}}` tokens.
+- Blocks marked `<!-- repeat -->` are repeatable: duplicate them as many times as the spec
+  needs (one code-region subsection per file, one row per edge case) and delete the markers.
+- The metadata header is updatable across the spec's life: every field except `created` is
+  an append-only comma-separated list — append new entries, never overwrite existing ones.
 - Never restate the design's success criteria or user stories; reference and refine only.
 
 ## Spec Template
 
-Build the spec from this template (Markdown — specs are code-and-table heavy reference
-documents; the design doc and plan carry the HTML visual layer).
+Build the spec from this template. It shares the dark, self-contained skeleton the
+brainstorming design template and the writing-plans plan template use (same `:root`
+palette, single inline `<style>`, no external assets), so design, spec, and plan read as
+one system. Code excerpts and contract JSON live in `<pre><code>`.
 
-````markdown
-# [Title]: [Short Description]
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Spec: {{TITLE}}</title>
+<style>
+  :root{--bg:#0f1115;--card:#181b22;--card2:#1e222b;--line:#2a2f3a;--fg:#e6e9ef;--mut:#9aa4b2;
+        --todo:#3b82f6;--done:#22c55e;--accent:#38bdf8;}
+  body{margin:0;background:var(--bg);color:var(--fg);
+       font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
+  .wrap{max-width:940px;margin:0 auto;padding:32px 24px 80px}
+  code,pre{background:#20242d;border-radius:4px;font:12.5px/1.5 ui-monospace,Menlo,monospace;color:#cfe3ff}
+  code{padding:1px 6px} pre{padding:12px;overflow-x:auto} pre code{padding:0;background:none}
+  h1{font-size:26px;margin:0 0 6px}
+  h2{font-size:16px;text-transform:uppercase;letter-spacing:.03em;color:var(--mut);
+     margin:34px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h3{font-size:15px;margin:20px 0 6px}
+  p{margin:8px 0}
+  .meta{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:16px 0}
+  .meta summary{cursor:pointer;color:var(--mut);font-weight:600}
+  .meta dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:12px 0 0}
+  .meta dt{color:var(--mut)} .meta dd{margin:0}
+  .note{background:var(--card);border-left:3px solid var(--accent);border-radius:6px;
+        padding:10px 14px;margin:10px 0;color:var(--mut)}
+  table{border-collapse:collapse;width:100%;margin:8px 0;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--card2);color:var(--mut);text-transform:uppercase;letter-spacing:.03em;font-size:12px}
+</style>
+</head>
+<body><div class="wrap">
 
-**Status:** Spec | In Progress | Complete
-**Priority:** P0/P1/P2 — [one-line justification]
-**Effort estimate:** [time estimate]
-**Depends on:** [what must be done first]
-**Design doc:** [path to the design doc this spec implements — e.g. .plans/specs/YYYY-MM-DD-<topic>-design.html]
-**Tech debt:** [tracker reference if applicable]
+<!-- ===== HEADER + FRONT MATTER + UPDATABLE METADATA ===== -->
+<h1>Spec: {{TITLE}} — {{SHORT_DESCRIPTION}}</h1>
+<div class="meta">
+  <b>Status:</b> {{STATUS: Spec | In Progress | Complete}}<br>
+  <b>Priority:</b> {{PRIORITY: P0/P1/P2}} — {{PRIORITY_JUSTIFICATION}}<br>
+  <b>Effort estimate:</b> {{EFFORT}}<br>
+  <b>Depends on:</b> {{DEPENDENCIES: what must be done first}}<br>
+  <b>Design doc:</b> <code>{{DESIGN_DOC_PATH: e.g. .plans/specs/YYYY-MM-DD-TOPIC-design.html}}</code><br>
+  <b>Tech debt:</b> {{TRACKER_REF: if applicable}}
+</div>
 
----
+<!-- Updatable metadata. Every field except `created` is an append-only comma-separated
+     list — append new entries across the spec's life, never overwrite existing ones. -->
+<details class="meta">
+  <summary>Metadata</summary>
+  <dl>
+    <dt>created</dt>      <dd>{{CREATED_ISO}}</dd>
+    <dt>modified</dt>     <dd>{{MODIFIED_ISO_LIST}}</dd>
+    <dt>commits</dt>      <dd>{{COMMIT_SHA_LIST}}</dd>
+    <dt>agents</dt>       <dd>{{AGENT_NAME_LIST}}</dd>
+    <dt>sessions</dt>     <dd>{{SESSION_ID_LIST}}</dd>
+    <dt>back refs</dt>    <dd>{{BACK_REFERENCES: e.g. the design doc this spec implements}}</dd>
+    <dt>forward refs</dt> <dd>{{FORWARD_REFERENCES: e.g. the plan built from this spec}}</dd>
+  </dl>
+</details>
 
-## Overview
+<!-- ===== OVERVIEW ===== -->
+<h2>Overview</h2>
+<p>{{OVERVIEW: narrative — what, why, and context. Tell the story so someone who missed
+   the last three sessions understands. Include the problem statement: what's broken,
+   missing, or insufficient today. Reference specific code, config, or behavior.}}</p>
+<p><b>What changes:</b> {{WHAT_CHANGES: one paragraph listing all modifications.}}</p>
+<p><b>What stays the same:</b> {{WHAT_STAYS: one paragraph confirming what is NOT touched.}}</p>
 
-[Narrative — what, why, and context. Tell the story so someone who missed the
-last three sessions understands. Include the problem statement: what's broken,
-missing, or insufficient today. Reference specific code, config, or behavior.]
+<!-- ===== GOALS & SUCCESS CRITERIA ===== -->
+<h2>Goals &amp; Success Criteria</h2>
+<p class="note"><b>Success criteria live in the design doc</b> (linked above). Do NOT
+   restate them here — link to the design and list ONLY refinements: new testable outcomes
+   discovered while writing this spec. If a criterion changes, change it in the design (its
+   Amendments section) and reference it here.</p>
+<p>{{SUCCESS_CRITERIA_REFINEMENTS: link to the design's criteria, plus refinements only.}}</p>
 
-**What changes:** [One paragraph listing all modifications.]
+<!-- ===== NON-GOALS ===== -->
+<h2>Non-Goals</h2>
+<ol>
+  <!-- repeat -->
+  <li>{{NON_GOAL: what this spec explicitly does NOT do, with where/when it's addressed}}</li>
+</ol>
 
-**What stays the same:** [One paragraph confirming what is NOT touched.]
+<!-- ===== USER STORIES ===== -->
+<h2>User Stories</h2>
+<p class="note"><b>User stories live in the design doc.</b> Link to the design's User
+   Stories section. Add here ONLY stories discovered during spec work; move them into the
+   design via its Amendments section if they change scope.</p>
+<p>{{USER_STORY_ADDITIONS: link to the design's stories, plus additions discovered here.}}</p>
 
----
+<!-- ===== CONTRACT CHANGES ===== -->
+<h2>Contract Changes</h2>
+<p><b>Schema:</b> exact schema/migration for any data-store changes, or "None — no schema changes."</p>
+<pre><code>{{SCHEMA_OR_NONE}}</code></pre>
+<p><b>API:</b> request/response examples for new/changed endpoints or interfaces, or
+   "None — no contract changes." Include error responses if applicable.</p>
+<pre><code>{{API_OR_NONE}}</code></pre>
 
-## Goals & Success Criteria
+<!-- ===== CODEBASE CONTEXT & CHANGES ===== -->
+<h2>Codebase Context &amp; Changes</h2>
+<p class="note"><b>The spec author already read these files.</b> Capture the exact code
+   sections here so the planning agent (writing-plans) does NOT need to re-read them. Each
+   subsection is one file region: what it does today, what needs to change, and why.</p>
 
-> **Success criteria live in the design doc** (linked above). Do NOT restate them
-> here — link to the design and list ONLY refinements: new testable outcomes
-> discovered while writing this spec. If a criterion changes, change it in the
-> design (its Amendments section) and reference it here.
+<!-- repeat: one <h3> + code + change per file region -->
+<h3><code>{{FILE_PATH}}:{{NN-MM}}</code> — {{WHAT_THIS_SECTION_DOES}}</h3>
+<pre><code>{{EXACT_CODE_TO_MODIFY}}</code></pre>
+<p><b>Change:</b> {{CHANGE: enough detail for a coding agent to implement without guessing.}}</p>
 
----
+<!-- ===== EDGE CASES & RISKS ===== -->
+<h2>Edge Cases &amp; Risks</h2>
+<p>Include race conditions, failure modes, concurrency, config mistakes, backward
+   compatibility, and rollback — all in one table.</p>
+<table>
+  <thead><tr><th>Case</th><th>What Happens</th><th>Mitigation</th></tr></thead>
+  <tbody>
+    <!-- repeat: one row per case -->
+    <tr><td>{{SCENARIO}}</td><td>{{CONSEQUENCE}}</td><td>{{MITIGATION}}</td></tr>
+  </tbody>
+</table>
 
-## Non-Goals
+<!-- ===== ACCEPTANCE TESTING ===== -->
+<h2>Acceptance Testing</h2>
+<p class="note"><b>Before writing any test code</b>, extract the user stories from the
+   design doc's User Stories section (plus any additions above) into a standalone Markdown
+   file: <code>tests/{{PHASE_OR_FIX}}/user-stories.md</code>, then follow the
+   acceptance-testing skill. The stories ARE the acceptance criteria — if they can't be
+   written, the spec isn't clear enough to implement.<br>
+   <b>Required skill:</b> <code>superpowers:acceptance-testing</code></p>
 
-1. [What this spec explicitly does NOT do, with where/when it will be addressed]
+<!-- ===== IMPLEMENTATION PLAN ===== -->
+<h2>Implementation Plan</h2>
+<p class="note"><b>After acceptance stories are written</b>, create the implementation plan
+   with the writing-plans skill.<br>
+   <b>Required skill:</b> <code>superpowers:writing-plans</code><br>
+   <b>Save to:</b> <code>.plans/YYYY-MM-DD-{{TOPIC}}-plan.html</code><br>
+   The plan header must reference this spec
+   (<code>.plans/specs/YYYY-MM-DD-{{TOPIC}}-spec.html</code>), and each task maps to one or
+   more acceptance stories from <code>tests/{{PHASE_OR_FIX}}/user-stories.md</code>. The
+   plan is the bridge between "what to build" (this spec) and "how to build it" (TDD tasks).
+   Do not skip it.</p>
 
----
-
-## User Stories
-
-> **User stories live in the design doc.** Link to the design's User Stories
-> section. Add here ONLY stories discovered during spec work; move them into the
-> design via its Amendments section if they change scope.
-
----
-
-## Contract Changes
-
-**Schema:** [Exact schema/migration for any data-store changes, or "None — no schema changes."]
-
-**API:** [Request/response examples for new/changed endpoints or interfaces, or
-"None — no contract changes." Include error responses if applicable.]
-
----
-
-## Codebase Context & Changes
-
-> **The spec author already read these files.** Capture the exact code sections
-> here so the planning agent (writing-plans) does NOT need to re-read them. Each
-> subsection is one file region: what it does today, what needs to change, and why.
-
-### 1. `path/to/file.ext:NN-MM` — [What this section does]
-
+</div></body></html>
 ```
-// Paste the exact code that will be modified.
-```
-
-**Change:** [What to do — enough detail for a coding agent to implement
-without guessing.]
-
-### 2. `path/to/another-file.ext:NN-MM` — [Description]
-
-```
-// Same pattern. One subsection per file or code region.
-```
-
-**Change:** [What to do.]
-
----
-
-## Edge Cases & Risks
-
-| Case | What Happens | Mitigation |
-|------|-------------|------------|
-| [Scenario] | [Consequence] | [How we handle it] |
-| [Backward-compat issue] | [Impact] | [Migration path or "automatic"] |
-| [Rollback scenario] | [Data safety] | [Step-by-step rollback] |
-
-[Include: race conditions, failure modes, concurrency, config mistakes,
-backward compatibility, and rollback — all in one table.]
-
----
-
-## Acceptance Testing
-
-> **Before writing any test code**, extract the user stories from the design
-> doc's User Stories section (plus any additions above) into a standalone file:
-> `tests/<phase-or-fix>/user-stories.md`, then follow the acceptance-testing
-> skill. The stories ARE the acceptance criteria — if they can't be written, the
-> spec isn't clear enough to implement.
->
-> **Required skill:** `superpowers:acceptance-testing`
-
----
-
-## Implementation Plan
-
-> **After acceptance stories are written**, create the implementation plan with
-> the writing-plans skill.
->
-> **Required skill:** `superpowers:writing-plans`
-> **Save to:** `.plans/YYYY-MM-DD-<topic>-plan.html`
->
-> The plan header must reference this spec:
-> `Spec: .plans/specs/YYYY-MM-DD-<topic>-spec.md`
-> Each task maps to one or more acceptance stories from
-> `tests/<phase-or-fix>/user-stories.md`.
->
-> The plan is the bridge between "what to build" (this spec) and "how to build
-> it" (TDD tasks). Do not skip it.
-````
 
 ## Self-Review
 
@@ -190,7 +220,8 @@ After writing the spec, look at it against the design doc with fresh eyes:
 
 1. **Reference discipline:** Did you restate any success criterion or user story that
    belongs in the design? Replace it with a link + refinement.
-2. **Placeholder scan:** Any leftover `[...]` slots, "TBD", or empty sections? Fill them.
+2. **Placeholder scan:** Any leftover `{{...}}` tokens, "TBD", or empty sections? Fill them.
+   A finished spec contains zero `{{}}` tokens.
 3. **Region completeness:** Does every file a task will touch appear in Codebase Context
    with its exact current code and a stated Change? The planning agent reads only this.
 4. **Contract precision:** Are schema/API deltas exact enough to implement without guessing?
