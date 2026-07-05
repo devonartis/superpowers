@@ -28,6 +28,13 @@ exactly.
 | Implementation is complete and tests pass — deciding how to integrate the work | `skills/finishing-a-development-branch/SKILL.md` |
 | Creating new skills, editing existing skills, or verifying skills work before deployment | `skills/writing-skills/SKILL.md` |
 
+**Name translation:** skill references written as `superpowers:<name>`
+are the Claude Code plugin namespace — that means `skills/<name>/SKILL.md`
+in this repo. On harnesses without plugin namespacing, use the bare name
+(e.g. pi: `/skill:writing-plans`). Plugin-only mechanics — auto-loading at
+session start, marketplace version updates — don't exist outside Claude
+Code; this file's trigger table is the substitute.
+
 ## Model Roles
 
 Skills name roles (orchestrator, designer, implementer, reviewer,

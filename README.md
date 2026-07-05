@@ -36,7 +36,7 @@ Installation differs by harness. If you use more than one, install Superpowers s
 **Two paths:**
 
 - **Claude Code** (and the other harnesses below with a native plugin/package manager) — install via that harness's marketplace or package manager. See the per-harness sections below.
-- **pi.dev and other AGENTS.md agents** — pi.dev discovers skills natively (a clone into the right skills folder is enough); harnesses without native discovery vendor this repo and wire it up via `AGENTS.md`. See [Using with pi.dev (and other AGENTS.md agents)](#using-with-pidev-and-other-agentsmd-agents) below.
+- **pi.dev and other AGENTS.md agents** — pi.dev discovers skills natively (a clone into the right skills folder is enough, see [Pi](#pi) below); harnesses without native discovery vendor this repo and wire it up via `AGENTS.md` (see [AGENTS.md-Only Agents](#agentsmd-only-agents-no-native-discovery) below).
 
 ### Claude Code
 
@@ -176,7 +176,24 @@ already use it in another harness.
 
 ### Pi
 
-Install Superpowers as a Pi package from this repository:
+pi.dev discovers skills natively and recursively, from two locations:
+
+- `~/.pi/agent/skills/` — global, available in every project
+- `.pi/skills/` — project-local, walking up from your working directory
+
+Skills use the same `SKILL.md` format pi.dev already follows (frontmatter
+`name` + `description` — the Agent Skills standard shared with Claude
+Code). The primary install is one clone, pinned to a tag or commit:
+
+```bash
+# Available in every project:
+git clone https://github.com/devonartis/superpowers ~/.pi/agent/skills/superpowers
+
+# Or, project-only:
+git clone https://github.com/devonartis/superpowers <project>/.pi/skills/superpowers
+```
+
+Alternatively, Pi's own package manager can install straight from a repository:
 
 ```bash
 pi install git:github.com/obra/superpowers
@@ -188,30 +205,10 @@ For local development, run Pi with this checkout loaded as a temporary package:
 pi -e /path/to/superpowers
 ```
 
-The Pi package loads the Superpowers skills and a small extension that injects the `using-superpowers` bootstrap at session startup and again after compaction. Pi has native skills, so no compatibility `Skill` tool is required. Subagent and task-list tools remain optional Pi companion packages.
-
-### Using with pi.dev (and other AGENTS.md agents)
-
-pi.dev discovers skills natively and recursively, from two locations:
-
-- `~/.pi/agent/skills/` — global, available in every project
-- `.pi/skills/` — project-local, walking up from your working directory
-
-Skills use the same `SKILL.md` format pi.dev already follows (frontmatter
-`name` + `description` — the Agent Skills standard shared with Claude
-Code), so installing Superpowers for pi.dev is one clone — no submodule
-ceremony required (though a submodule works fine too if you'd rather pin
-that way):
-
-```bash
-# Available in every project:
-git clone https://github.com/devonartis/superpowers ~/.pi/agent/skills/superpowers
-
-# Or, project-only:
-git clone https://github.com/devonartis/superpowers <project>/.pi/skills/superpowers
-```
-
-Pin a tag or commit for stability either way.
+Pi has native skills, so no compatibility `Skill` tool is required.
+Subagent and task-list tools remain optional Pi companion packages — core
+pi ships without a subagent tool by default, so execute delegated steps
+inline, in order, in the main loop if none is installed.
 
 **Triggering:** pi's own docs note that auto-matching skills by
 description alone is unreliable. Invoke a skill explicitly with
@@ -227,12 +224,15 @@ runs on that session model — see
 `skills/using-superpowers/references/model-roles.md`. Works with any
 Anthropic API model; no Fable, no Claude Code required.
 
-**Subagents:** core pi ships without a subagent tool (documented).
-Execute delegated steps inline, in order, in the main loop.
+**Name translation:** skill cross-references written as
+`superpowers:<name>` are the Claude Code plugin namespace. Pi has no
+plugin namespacing — use the bare name, e.g. `/skill:writing-plans`.
 
 **Sources:** [pi skills docs](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/skills.md), [pi coding-agent README](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/README.md)
 
-For other AGENTS.md-reading harnesses that don't discover skills natively,
+### AGENTS.md-Only Agents (No Native Discovery)
+
+For AGENTS.md-reading harnesses that don't discover skills natively,
 vendor this repo instead (git submodule or clone, pinned to a tag or
 commit) and add a line to your project's `AGENTS.md` pointing at the
 vendored copy:
