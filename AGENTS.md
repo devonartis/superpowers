@@ -51,3 +51,8 @@ inline, in order, in the main loop rather than skipping them.
 - **AGENTS.md consumers:** vendor this repo via git submodule or clone
   and pin a tag or commit. There is no plugin version ritual on this
   side — update by moving your pin.
+
+## Contributing
+
+Contributing to this repo (not just using it)? Read `CLAUDE.md` at the
+root first — it has the PR requirements and disclosure rules.

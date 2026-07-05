@@ -36,7 +36,7 @@ Installation differs by harness. If you use more than one, install Superpowers s
 **Two paths:**
 
 - **Claude Code** (and the other harnesses below with a native plugin/package manager) — install via that harness's marketplace or package manager. See the per-harness sections below.
-- **AGENTS.md agents** (pi.dev and similar harnesses that read a root `AGENTS.md` and have no native Superpowers plugin) — vendor this repo into your project and wire it up manually. See [AGENTS.md Agents (pi.dev, etc.)](#agentsmd-agents-pidev-etc) below.
+- **pi.dev and other AGENTS.md agents** — pi.dev discovers skills natively (a clone into the right skills folder is enough); harnesses without native discovery vendor this repo and wire it up via `AGENTS.md`. See [Using with pi.dev (and other AGENTS.md agents)](#using-with-pidev-and-other-agentsmd-agents) below.
 
 ### Claude Code
 
@@ -190,43 +190,59 @@ pi -e /path/to/superpowers
 
 The Pi package loads the Superpowers skills and a small extension that injects the `using-superpowers` bootstrap at session startup and again after compaction. Pi has native skills, so no compatibility `Skill` tool is required. Subagent and task-list tools remain optional Pi companion packages.
 
-### AGENTS.md Agents (pi.dev, etc.)
+### Using with pi.dev (and other AGENTS.md agents)
 
-> **Status: pending verification.** The exact skill-discovery behavior of
-> pi.dev-style AGENTS.md agents is being confirmed and will be corrected in a
-> follow-up if needed. The steps below — vendoring, wiring, model roles, and
-> the no-subagent fallback — are accurate as written.
+pi.dev discovers skills natively and recursively, from two locations:
 
-For coding agents that read a root `AGENTS.md` file and run against the
-Anthropic API with a single model chosen at launch (no Claude Code, no
-Fable, no native Superpowers plugin required):
+- `~/.pi/agent/skills/` — global, available in every project
+- `.pi/skills/` — project-local, walking up from your working directory
 
-1. Vendor the fork into your project, pinned to a tag or commit:
+Skills use the same `SKILL.md` format pi.dev already follows (frontmatter
+`name` + `description` — the Agent Skills standard shared with Claude
+Code), so installing Superpowers for pi.dev is one clone — no submodule
+ceremony required (though a submodule works fine too if you'd rather pin
+that way):
 
-   ```bash
-   git submodule add https://github.com/devonartis/superpowers .agents/superpowers
-   ```
+```bash
+# Available in every project:
+git clone https://github.com/devonartis/superpowers ~/.pi/agent/skills/superpowers
 
-   (A plain clone works too — pin a tag/commit either way. Plugin
-   version-bump rituals don't apply here; update by moving your pin.)
+# Or, project-only:
+git clone https://github.com/devonartis/superpowers <project>/.pi/skills/superpowers
+```
 
-2. Wire your project's root `AGENTS.md` to the fork:
+Pin a tag or commit for stability either way.
 
-   ```markdown
-   ## Process skills (superpowers)
-   Read `.agents/superpowers/AGENTS.md` now — it indexes the process skills in
-   `.agents/superpowers/skills/`. When a task matches a skill's trigger, read
-   that skill's SKILL.md at its full path and follow it exactly.
-   ```
+**Triggering:** pi's own docs note that auto-matching skills by
+description alone is unreliable. Invoke a skill explicitly with
+`/skill:<name>` (e.g. `/skill:brainstorming`), or add a line to your
+project's `AGENTS.md` telling the agent to check this repo's `AGENTS.md`
+trigger table before starting work — pi concatenates `AGENTS.md` from
+`~/.pi/agent/`, parent directories, and your working directory into the
+system prompt, so that line is guaranteed to be seen.
 
-3. Model roles: skills name roles (orchestrator, designer, implementer,
-   reviewer, verifier), never concrete models. Roles resolve per
-   `.agents/superpowers/skills/using-superpowers/references/model-roles.md`;
-   with no harness-specific bindings, every role runs on the session model
-   you chose at launch.
+**Model roles:** pi users pick the model per session (`/model`, `Ctrl+L`,
+or the `--provider`/`--model` flags). With no role bindings, every role
+runs on that session model — see
+`skills/using-superpowers/references/model-roles.md`. Works with any
+Anthropic API model; no Fable, no Claude Code required.
 
-4. No subagent support in your harness? Execute delegated steps inline, in
-   order, in the main loop.
+**Subagents:** core pi ships without a subagent tool (documented).
+Execute delegated steps inline, in order, in the main loop.
+
+**Sources:** [pi skills docs](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/skills.md), [pi coding-agent README](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/README.md)
+
+For other AGENTS.md-reading harnesses that don't discover skills natively,
+vendor this repo instead (git submodule or clone, pinned to a tag or
+commit) and add a line to your project's `AGENTS.md` pointing at the
+vendored copy:
+
+```markdown
+## Process skills (superpowers)
+Read `.agents/superpowers/AGENTS.md` now — it indexes the process skills in
+`.agents/superpowers/skills/`. When a task matches a skill's trigger, read
+that skill's SKILL.md at its full path and follow it exactly.
+```
 
 ## The Basic Workflow
 
