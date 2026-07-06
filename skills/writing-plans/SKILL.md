@@ -51,8 +51,8 @@ plan must prove that derivation. Do this before touching File Structure or tasks
    task states which criterion/story it satisfies. Unit tests satisfy unit-level requirements
    only — they do not substitute for the acceptance stories the spec requires.
 
-The Self-Review Completion Gate (below) checks this mapping before the plan can be declared
-done — a plan that skips this step will fail that gate.
+The Independent Plan Verification gate (below) checks this mapping before the plan can be
+declared done — a plan that skips this step will fail that gate.
 
 ## File Structure
 
@@ -331,18 +331,7 @@ and validation blocks, `[...]` brackets in the header. Both are slots, and both 
 
 ## Self-Review
 
-After writing the complete plan, look at the spec with fresh eyes and check the plan against it. This is a checklist you run yourself — not a subagent dispatch.
-
-**0. Completion Gate — Derivation & Coverage (run this first):**
-   a. Is the "Derived from" block at the top of the document filled in with real links to the
-      design doc and spec (no `[DESIGN_DOC_PATH]` / `[SPEC_PATH]` placeholders left)?
-   b. Does every success criterion in the design + spec have at least one task?
-   c. Have you extracted every required user story / acceptance story (from the spec's
-      Acceptance Testing section or its `user-stories.md`), and does every one map to a task?
-   d. Is acceptance-level testing represented as its own task, not silently replaced by unit
-      tests?
-   Any "no" answer means the plan is not done — fix it before moving on to the checks below,
-   and before offering the Execution Handoff.
+After writing the complete plan, look at the spec with fresh eyes and check the plan against it. This is a self-check pass you run yourself — not a subagent dispatch, and not a substitute for the Independent Plan Verification gate below.
 
 **1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
 
@@ -352,11 +341,42 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 
+## Independent Plan Verification (Mandatory Gate)
+
+The plan is not complete when the last task is written — it's complete when an independent
+verifier confirms it. Self-Review above catches placeholders and typos; it does not catch "a
+whole story got dropped." Do not self-verify, and do not skip this gate.
+
+Dispatch a **fresh verifier subagent** — a different context, not you continuing your own
+train of thought. Give it exactly three inputs:
+1. The design doc.
+2. The spec.
+3. The drafted plan.
+
+Hand it the **original requirement** as its checklist — never your summary of what you built.
+A verifier working from the author's summary will confirm the summary, not the plan.
+
+The verifier confirms:
+- Every Success Criterion in the design/spec maps to at least one plan task.
+- Every User Story is extracted and mapped to a task — including, where the spec requires it,
+  a `tests/<feature>/user-stories.md` extraction as its own task.
+- Acceptance criteria / acceptance tests appear as tasks in their own right — not silently
+  replaced by unit tests.
+- The plan opens with a filled-in Derived-from block linking the exact design + spec (no
+  `[DESIGN_DOC_PATH]` / `[SPEC_PATH]` placeholders left).
+- No design/spec requirement was silently dropped.
+
+The verifier returns **PASS** or a specific gap list — never a vague "looks good." On any gap,
+the plan author fixes the plan and re-dispatches the verifier. Repeat until PASS.
+
+**The plan is not complete, and execution does not begin — no "which approach?" question, no
+task dispatch — until the verifier returns PASS.** This gate is not optional and not skippable.
+
 ## Execution Handoff
 
 **Gate:** Do not reach this section — do not offer an execution choice, do not ask "which
-approach?" — until every item in the Self-Review Completion Gate (item 0, above) passes. A
-plan that hasn't proven its design + spec derivation and coverage mapping is not complete.
+approach?" — until the Independent Plan Verification gate above has returned PASS. A plan that
+hasn't been independently verified against its design + spec is not complete.
 
 After saving the plan, offer execution choice:
 
