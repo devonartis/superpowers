@@ -30,6 +30,30 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 If the spec covers multiple independent subsystems, it should have been broken into sub-project specs during brainstorming. If it wasn't, suggest breaking this into separate plans — one per subsystem. Each plan should produce working, testable software on its own.
 
+## Derive From Design + Spec — Before Any Decomposition
+
+A plan is never written free-hand. It is derived from a design doc and a spec, and every
+plan must prove that derivation. Do this before touching File Structure or tasks:
+
+1. **Identify the source pair.** Locate the exact design doc and spec this plan implements
+   (per `superpowers:writing-specs` convention, plus whatever local overlay the project uses —
+   some keep both in `.plans/specs/`, others split design into `.plans/designs/`). A plan
+   with no named design + spec provenance is invalid — do not start decomposing until you
+   have both exact paths in hand.
+2. **Extract Success Criteria and User Stories first.** Read the spec's (and design doc's)
+   Success Criteria and User Stories / Acceptance Testing sections before writing any other
+   task. If the spec points at an acceptance-stories file (e.g.
+   `tests/<phase-or-fix>/user-stories.md`, per `superpowers:acceptance-testing`) that doesn't
+   exist yet, writing it is Task 1 of this plan — scheduled before any implementation task,
+   not skipped or left implicit.
+3. **Map coverage as you decompose.** While defining File Structure and tasks, keep a running
+   map: every success criterion and every acceptance story gets at least one task, and every
+   task states which criterion/story it satisfies. Unit tests satisfy unit-level requirements
+   only — they do not substitute for the acceptance stories the spec requires.
+
+The Self-Review Completion Gate (below) checks this mapping before the plan can be declared
+done — a plan that skips this step will fail that gate.
+
 ## File Structure
 
 Before defining tasks, map out which files will be created or modified and what each one is responsible for. This is where decomposition decisions get locked in.
@@ -118,6 +142,11 @@ must stand out, stands out.
 <body><div class="wrap">
 
 <h1>[Feature Name] Implementation Plan</h1>
+<p class="derived"><b>Derived from:</b>
+  Design: <a href="[DESIGN_DOC_PATH]">[DESIGN_DOC_PATH]</a> ·
+  Spec: <a href="[SPEC_PATH]">[SPEC_PATH]</a><br>
+  <i>A plan with no design + spec provenance is invalid — both links are required, not optional.</i>
+</p>
 <div class="meta">
   <b>For agentic workers:</b> REQUIRED SUB-SKILL: superpowers:subagent-driven-development
   (recommended) or superpowers:executing-plans, task-by-task. Track each step's
@@ -304,6 +333,17 @@ and validation blocks, `[...]` brackets in the header. Both are slots, and both 
 
 After writing the complete plan, look at the spec with fresh eyes and check the plan against it. This is a checklist you run yourself — not a subagent dispatch.
 
+**0. Completion Gate — Derivation & Coverage (run this first):**
+   a. Is the "Derived from" block at the top of the document filled in with real links to the
+      design doc and spec (no `[DESIGN_DOC_PATH]` / `[SPEC_PATH]` placeholders left)?
+   b. Does every success criterion in the design + spec have at least one task?
+   c. Have you extracted every required user story / acceptance story (from the spec's
+      Acceptance Testing section or its `user-stories.md`), and does every one map to a task?
+   d. Is acceptance-level testing represented as its own task, not silently replaced by unit
+      tests?
+   Any "no" answer means the plan is not done — fix it before moving on to the checks below,
+   and before offering the Execution Handoff.
+
 **1. Spec coverage:** Skim each section/requirement in the spec. Can you point to a task that implements it? List any gaps.
 
 **2. Placeholder scan:** Search your plan for red flags — any of the patterns from the "No Placeholders" section above. Fix them.
@@ -313,6 +353,10 @@ After writing the complete plan, look at the spec with fresh eyes and check the 
 If you find issues, fix them inline. No need to re-review — just fix and move on. If you find a spec requirement with no task, add the task.
 
 ## Execution Handoff
+
+**Gate:** Do not reach this section — do not offer an execution choice, do not ask "which
+approach?" — until every item in the Self-Review Completion Gate (item 0, above) passes. A
+plan that hasn't proven its design + spec derivation and coverage mapping is not complete.
 
 After saving the plan, offer execution choice:
 
