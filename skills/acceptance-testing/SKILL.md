@@ -12,6 +12,24 @@ works." This skill is the **methodology**. Each project supplies the specifics.
 
 **Announce at start:** "I'm using the acceptance-testing skill to write the live test evidence."
 
+## Independent Test Authorship (Non-Negotiable)
+
+User stories and acceptance tests are the contract — proof the feature does what it was asked
+to do, not proof it does what the code happens to do. That proof is only real if it comes from
+someone who never saw the implementation.
+
+**A dedicated test-author role writes `user-stories.md` and the acceptance tests from the
+design doc and spec alone, before implementation begins.** The implementer never authors
+these stories and never edits them — same don't-self-verify principle as the Independent Plan
+Verification gate in `superpowers:writing-plans`. An implementer deriving acceptance tests from
+their own code is grading their own homework: the tests will confirm what was built, not what
+was required.
+
+Unit tests are different — they stay the implementer's, written inside their own red-green
+loop (`superpowers:test-driven-development`) as they build each piece. The split is the standard
+double loop: acceptance tests are the outer contract a test-author owns; unit tests are the
+inner loop the implementer owns.
+
 ## Read the Project Overlay FIRST
 
 Each project defines its own overlay — **personas and their tools, deployment modes and

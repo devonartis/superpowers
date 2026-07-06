@@ -13,6 +13,13 @@ Write the test first. Watch it fail. Write minimal code to pass.
 
 **Violating the letter of the rules is violating the spirit of the rules.**
 
+**Red-green is not optional for feature or bugfix work.** This isn't a style preference —
+`superpowers:executing-plans` treats a task with no red evidence as incomplete. The red
+evidence is the failing test's output, captured at the moment it fails, before the
+implementation exists. A test you never watched fail proves nothing: it may be passing
+vacuously (testing the wrong thing, or nothing at all), and you have no way to tell the
+difference after the fact. Capture the red output before writing a line of the fix.
+
 ## When to Use
 
 **Always:**

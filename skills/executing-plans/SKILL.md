@@ -25,9 +25,23 @@ Load plan, review critically, execute all tasks, report when complete.
 
 For each task:
 1. Mark as in_progress
-2. Follow each step exactly (plan has bite-sized steps)
+2. Follow each step exactly (plan has bite-sized steps), in red-green-refactor order:
+   a. Write the failing test first and **run it — capture the failing output as the task's
+      red evidence.** A test never observed red proves nothing; it may be passing vacuously.
+   b. Write the minimal code to make it pass (green).
+   c. Refactor with tests green.
+   d. Run the full gates for the task.
+   A task with no red evidence recorded is not done — per `superpowers:test-driven-development`,
+   this is not optional for feature or bugfix work.
 3. Run verifications as specified
 4. Mark as completed
+
+**Never touch a test-author's tests.** Acceptance tests and user stories written by the
+test-author role (per `superpowers:acceptance-testing`) are the contract, not an obstacle.
+The implementer may ADD tests but may never modify, weaken, skip, or delete one the
+test-author wrote. A failing acceptance test is a finding — fix the code, or escalate it as
+a spec question — never edit the test to make it pass. Any change to a test-author-authored
+test requires reviewer sign-off, recorded in the task's evidence.
 
 ### Step 3: Complete Development
 

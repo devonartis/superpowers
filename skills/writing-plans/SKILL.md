@@ -45,11 +45,17 @@ plan must prove that derivation. Do this before touching File Structure or tasks
    task. If the spec points at an acceptance-stories file (e.g.
    `tests/<phase-or-fix>/user-stories.md`, per `superpowers:acceptance-testing`) that doesn't
    exist yet, writing it is Task 1 of this plan — scheduled before any implementation task,
-   not skipped or left implicit.
+   not skipped or left implicit. **Assign this task to the test-author role**, not the
+   implementer — per `superpowers:acceptance-testing`'s independent-test-authorship rule,
+   user stories and acceptance tests are derived from the design doc and spec alone, never
+   from implementation code.
 3. **Map coverage as you decompose.** While defining File Structure and tasks, keep a running
    map: every success criterion and every acceptance story gets at least one task, and every
    task states which criterion/story it satisfies. Unit tests satisfy unit-level requirements
-   only — they do not substitute for the acceptance stories the spec requires.
+   only — they do not substitute for the acceptance stories the spec requires. Test-authorship
+   tasks are listed before the implementation tasks that depend on them; each implementation
+   task's Interfaces block names the acceptance test(s) it must satisfy, so the implementer
+   builds toward a contract someone else already wrote.
 
 The Independent Plan Verification gate (below) checks this mapping before the plan can be
 declared done — a plan that skips this step will fail that gate.

@@ -23,6 +23,7 @@ role runs on whatever model is already running the session.
 | **orchestrator** | Plans, decomposes work, dispatches other roles, reviews their output, decides what happens next |
 | **designer** | Brainstorming, design, spec authoring, plan authoring — creative and architectural judgment |
 | **implementer** | Writes code from a plan or task brief |
+| **test-author** | Authors contract tests (user stories, acceptance tests) from the design doc and spec, independent of the implementer |
 | **reviewer** | Reviews code or spec/plan documents for correctness and quality |
 | **verifier** | Checklist-style verification of another agent's output — cheap/fast tier, narrow scope |
 
@@ -34,6 +35,7 @@ The only bindings this fork ships:
 | --- | --- |
 | designer | opus |
 | implementer | sonnet |
+| test-author | sonnet (PROVISIONAL — owner may rebind) |
 | reviewer | sonnet |
 | verifier | haiku |
 | orchestrator | (session model) |
