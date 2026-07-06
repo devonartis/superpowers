@@ -212,7 +212,7 @@ must stand out, stands out.
 <p class="note"><b>After acceptance stories are written</b>, create the implementation plan
    with the writing-plans skill.<br>
    <b>Required skill:</b> <code>superpowers:writing-plans</code><br>
-   <b>Save to:</b> <code>.plans/YYYY-MM-DD-{{TOPIC}}-plan.html</code><br>
+   <b>Save to:</b> <code>.plans/implementation/YYYY-MM-DD-{{TOPIC}}-plan.html</code><br>
    The plan header must reference this spec
    (<code>.plans/specs/YYYY-MM-DD-{{TOPIC}}-spec.html</code>), and each task maps to one or
    more acceptance stories from <code>tests/{{PHASE_OR_FIX}}/user-stories.md</code>. The

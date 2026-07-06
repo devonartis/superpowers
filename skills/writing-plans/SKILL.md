@@ -15,7 +15,7 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Context:** If working in an isolated worktree, it should have been created via the `superpowers:using-git-worktrees` skill at execution time.
 
-**Save plans to:** `.plans/YYYY-MM-DD-<feature-name>.html`
+**Save plans to:** `.plans/implementation/YYYY-MM-DD-<feature-name>-plan.html`
 - (User preferences for plan location override this default)
 - **Plans are HTML, not markdown.** They are read by humans in a browser AND executed by agents.
   Step tracking uses `data-status` attributes instead of markdown checkboxes (see templates below).
@@ -316,7 +316,7 @@ If you find issues, fix them inline. No need to re-review — just fix and move 
 
 After saving the plan, offer execution choice:
 
-**"Plan complete and saved to `.plans/<filename>.html`. Two execution options:**
+**"Plan complete and saved to `.plans/implementation/<filename>.html`. Two execution options:**
 
 **1. Subagent-Driven (recommended)** - I dispatch a fresh subagent per task, review between tasks, fast iteration
 
