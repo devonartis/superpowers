@@ -82,6 +82,20 @@ digraph brainstorming {
 - Present options conversationally with your recommendation and reasoning
 - Lead with your recommended option and explain why
 
+**Presenting options — recommendation is never optional:**
+
+Whenever you present options — multiple-choice questions, approach forks, AskUserQuestion
+calls, A/B/C choices — never present naked options and never park the reasoning in prose
+after the question. The recommendation and its why live *inside* the option:
+
+- Always include a recommendation. List the recommended option first, labeled
+  "(Recommended)", with the reasoning for it in that option's own description.
+- Every non-recommended option's description states why it's *not* recommended — the
+  trade-off, risk, or cost that loses out — so the user can overrule you with full
+  information. The goal is helping the user decide, not steering them blind.
+- Any background needed to judge the options goes inside the question or option
+  descriptions themselves, not in trailing prose the user has to read after comparing.
+
 **Presenting the design:**
 
 - Once you believe you understand what you're building, present the design
@@ -319,6 +333,7 @@ stand out, stands out.
 
 - **One question at a time** - Don't overwhelm with multiple questions
 - **Multiple choice preferred** - Easier to answer than open-ended when possible
+- **Options always carry a recommendation** - recommended option first and labeled, why it wins and why each alternative loses live inside the options themselves, never trailing prose (see "Presenting options" above)
 - **YAGNI ruthlessly** - Remove unnecessary features from all designs
 - **Explore alternatives** - Always propose 2-3 approaches before settling
 - **Incremental validation** - Present design, get approval before moving on
